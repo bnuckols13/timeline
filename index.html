@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Hole Monday: The FBI Timeline</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(180deg, #1a1a1a 0%, #2a2a2a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 20px 30px;
+            background: rgba(0,0,0,0.5);
+            border-bottom: 2px solid #ff4444;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            color: #ffffff;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .subtitle {
+            color: #ff6666;
+            font-size: 1.2em;
+            font-style: italic;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+            border-bottom: 1px solid #333;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .timeline-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            position: relative;
+        }
+        
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, #ff4444, #ffaa44);
+            transform: translateX(-50%);
+            z-index: 1;
+        }
+        
+        .year-marker {
+            position: relative;
+            text-align: center;
+            margin: 60px 0 40px;
+            z-index: 10;
+        }
+        
+        .year-marker h2 {
+            display: inline-block;
+            background: #ff4444;
+            color: white;
+            padding: 10px 30px;
+            border-radius: 25px;
+            font-size: 1.8em;
+            box-shadow: 0 4px 15px rgba(255,68,68,0.4);
+        }
+        
+        .event {
+            position: relative;
+            margin: 30px 0;
+            display: flex;
+            align-items: flex-start;
+            opacity: 0;
+            animation: fadeIn 0.6s ease forwards;
+        }
+        
+        .event:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+        
+        .event-content {
+            width: 45%;
+            padding: 20px;
+            background: rgba(40,40,40,0.9);
+            border-radius: 10px;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .event:nth-child(odd) .event-content {
+            margin-right: auto;
+            margin-left: 20px;
+        }
+        
+        .event:nth-child(even) .event-content {
+            margin-left: auto;
+            margin-right: 20px;
+        }
+        
+        .event-content:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .event-content.verified {
+            border-color: #44ff44;
+        }
+        
+        .event-content.documented {
+            border-color: #ffaa44;
+        }
+        
+        .event-content.disputed {
+            border-color: #ff4444;
+        }
+        
+        .event-dot {
+            position: absolute;
+            left: 50%;
+            top: 30px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+        
+        .event-dot.verified {
+            background: #44ff44;
+        }
+        
+        .event-dot.documented {
+            background: #ffaa44;
+        }
+        
+        .event-dot.disputed {
+            background: #ff4444;
+        }
+        
+        .event-date {
+            font-weight: bold;
+            color: #ffaa44;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .event-title {
+            font-size: 1.2em;
+            color: #ffffff;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+        
+        .event-description {
+            color: #b0b0b0;
+            line-height: 1.5;
+            font-size: 0.95em;
+        }
+        
+        .event-source {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #444;
+            font-size: 0.85em;
+            color: #888;
+            font-style: italic;
+        }
+        
+        .highlight-box {
+            background: rgba(255,68,68,0.1);
+            border: 2px solid #ff4444;
+            margin: 40px 0;
+            padding: 30px;
+            border-radius: 15px;
+            position: relative;
+            z-index: 5;
+        }
+        
+        .highlight-box h3 {
+            color: #ff6666;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            text-align: center;
+        }
+        
+        .critical-period {
+            background: linear-gradient(90deg, rgba(255,68,68,0.2), rgba(255,170,68,0.2));
+            padding: 20px;
+            margin: 20px -20px;
+            border-left: 4px solid #ff4444;
+            border-right: 4px solid #ffaa44;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(255,68,68,0.5);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(255,68,68,0.8);
+            }
+        }
+        
+        .contradiction {
+            animation: pulse 2s infinite;
+        }
+        
+        .connection-line {
+            position: absolute;
+            border-top: 2px dashed #ffaa44;
+            opacity: 0.5;
+            z-index: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .timeline-line {
+                left: 30px;
+            }
+            
+            .event {
+                flex-direction: column !important;
+            }
+            
+            .event-content {
+                width: calc(100% - 60px);
+                margin-left: 60px !important;
+                margin-right: 20px !important;
+            }
+            
+            .event-dot {
+                left: 30px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Memory Hole Monday: The Timeline</h1>
+        <div class="subtitle">Tracking the paper trail from 2015 to 2025</div>
+    </div>
+    
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-dot" style="background: #44ff44;"></div>
+            <span>Verified</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="background: #ffaa44;"></div>
+            <span>Documented</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="background: #ff4444;"></div>
+            <span>Disputed/Contradictory</span>
+        </div>
+    </div>
+    
+    <div class="timeline-container">
+        <div class="timeline-line"></div>
+        
+        <!-- 2015 -->
+        <div class="year-marker">
+            <h2>2015</h2>
+        </div>
+        
+        <div class="event">
+            <div class="event-content documented">
+                <div class="event-date">Late 2015</div>
+                <div class="event-title">Brennan Allegedly Begins Operations</div>
+                <div class="event-description">
+                    Scott Horton claims CIA Director John Brennan began operations against Trump - 8 months before official FBI investigation
+                </div>
+                <div class="event-source">Source: Daniel Davis / Deep Dive podcast, Sept 2025</div>
+            </div>
+            <div class="event-dot documented"></div>
+        </div>
+        
+        <!-- 2016 -->
+        <div class="year-marker">
+            <h2>2016</h2>
+        </div>
+        
+        <div class="event">
+            <div class="event-content disputed">
+                <div class="event-date">January 2016</div>
+                <div class="event-title">First Intercepted Memorandum</div>
+                <div class="event-description">
+                    Alleges Obama intended to shut down Clinton investigation. Names Wasserman Schultz, Soros Foundation's Leonard Benardo
+                </div>
+                <div class="event-source">Durham Annex (assessed as "likely Russian fabrication")</div>
+            </div>
+            <div class="event-dot disputed"></div>
+        </div>
+        
+        <div class="event">
+            <div class="event-content verified">
+                <div class="event-date">April 2016</div>
+                <div class="event-title">Clinton Campaign Hires Fusion GPS</div>
+                <div class="event-description">
+                    Through law firm Perkins Coie, Clinton campaign and DNC hire Fusion GPS for opposition research
+                </div>
+                <div class="event-source">Source: Washington Post, CNN</div>
+            </div>
+            <div class="event-dot verified"></div>
+        </div>
+        
+        <div class="event">
+            <div class="event-content verified">
+                <div class="event-date">May/June 2016</div>
+                <div class="event-title">Fusion GPS Hires Christopher Steele</div>
+                <div class="event-description">
+                    Former MI6 officer paid $168,000 to investigate Trump-Russia ties
+                </div>
+                <div class="event-source">Source: CBS News, Washington Post</div>
+            </div>
+            <div class="event-dot verified"></div>
+        </div>
+        
+        <div class="event">
+            <div class="event-content verified">
+                <div class="event-date">July 5, 2016</div>
+                <div class="event-title">Comey Clears Clinton</div>
+                <div class="event-description">
+                    FBI Director announces "no reasonable prosecutor" would charge Clinton over emails
+                </div>
+                <div class="event-source">Source: All major outlets</div>
+            </div>
+            <div class="event-dot verified"></div>
+        </div>
+        
+        <div class="event">
+            <div class="event-content documented">
+                <div class="event-date">July 26, 2016</div>
+                <div class="event-title">CIA Receives Clinton Plan Intelligence</div>
+                <div class="event-description">
+                    Intelligence about alleged Clinton campaign plan to tie Trump to Russia
+                </div>
+                <div class="event-source">Source: Durham Report</div>
+            </div>
+            <div class="event-dot documented"></div>
+        </div>
+        
+        <div class="event">
+            <div class="event-content verified">
+                <div class="event-date">July 31, 2016</div>
+                <div class="event-title">FBI Opens Crossfire Hurricane</div>
+                <div class="event-description">
+                    Official start of FBI investigation into Trump campaign - 5 days after CIA receives Clinton plan intelligence
+                </div>
+                <div class="event-source">Source: Durham Report, DOJ IG Report</div>
+            </div>
+            <div class="event-dot verified"></div>
+        </div>
+        
+        <div class="event">
+            <div class="event-content documented">
+                <div class="event-date">August 3, 2016</div>
+                <div class="event-title">Brennan Briefs Obama</div>
+                <div class="event-description">
+                    CIA Director briefs President on Clinton plan intelligence
+                </div>
+                <div class="event-source">Source: Durham Report, CNN</div>
+            </div>
+            <div class="event-dot documented"></div>
+        </div>
+        
+        <!-- Critical 30 Days -->
+        <div class="highlight-box">
+            <h3>The Critical 30 Days</h3>
+            <div class="critical-period">
+                
+                <div class="event">
+                    <div class="event-content verified contradiction">
+                        <div class="event-date">September 28, 2016</div>
+                        <div class="event-title">🚨 FBI Discovers 300,000+ Clinton Emails</div>
+                        <div class="event-description">
+                            FBI finds massive trove of Clinton emails on Anthony Weiner's laptop "within hours"
+                        </div>
+                        <div class="event-source">Source: DOJ IG Report</div>
+                    </div>
+                    <div class="event-dot disputed"></div>
+                </div>
+                
+                <div class="event">
+                    <div class="event-content verified">
+                        <div class="event-date">September 29, 2016</div>
+                        <div class="event-title">FBI Leadership Notified</div>
+                        <div class="event-description">
+                            Conference call with McCabe, Strzok, Priestap about laptop discovery
+                        </div>
+                        <div class="event-source">Source: DOJ IG Report</div>
+                    </div>
+                    <div class="event-dot verified"></div>
+                </div>
+                
+                <div class="event">
+                    <div class="event-content documented">
+                        <div class="event-date">October 3-27, 2016</div>
+                        <div class="event-title">⚠️ 24 Days of Inaction</div>
+                        <div class="event-description">
+                            "No evidence that anyone... took any action" on laptop emails for nearly a month
+                        </div>
+                        <div class="event-source">Source: DOJ IG Report, Slate analysis</div>
+                    </div>
+                    <div class="event-dot documented"></div>
+                </div>
+                
+                <div class="event">
+                    <div class="event-content verified contradiction">
+                        <div class="event-date">October 28, 2016</div>
+                        <div class="event-title">🚨 Comey Reopens Investigation</div>
+                        <div class="event-description">
+                            Letter to Congress about Weiner laptop - 11 days before election. What forced his hand?
+                        </div>
+                        <div class="event-source">Source: NPR, NBC News, Washington Post</div>
+                    </div>
+                    <div class="event-dot disputed"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 2017 -->
+        <div class="year-marker">
+            <h2>2017</h2>
+        </div>
+        
+        <div class="event">
+            <div class="event-content disputed contradiction">
+                <div class="event-date">May 3, 2017</div>
+                <div class="event-title">⚠️ Comey Denies Authorizing Leaks</div>
+                <div class="event-description">
+                    Tells Senate: "Never" authorized anyone at FBI to be anonymous source
+                </div>
+                <div class="event-source">Source: Senate Judiciary Committee testimony</div>
+            </div>
+            <div class="event-dot disputed"></div>
+        </div>
+        
+        <div class="event">
+            <div class="event-content verified">
+                <div class="event-date">June 8, 2017</div>
+                <div class="event-title">Comey Admits to Leak</div>
+                <div class="event-description">
+                    Tells Senate he asked friend to leak memo to NYT to trigger special counsel
+                </div>
+                <div class="event-source">Source: Senate Intelligence Committee</div>
+            </div>
+            <div class="event-dot verified"></div>
+        </div>
+        
+        <!-- 2018 -->
+        <div class="year-marker">
+            <h2>2018</h2>
+        </div>
+        
+        <div class="event">
+            <div class="event-content verified">
+                <div class="event-date">March 16, 2018</div>
+                <div class="event-title">McCabe Fired</div>
+                <div class="event-description">
+                    Fired 26 hours before retirement for "lack of candor" about WSJ leak
+                </div>
+                <div class="event-source">Source: NBC News</div>
+            </div>
+            <div class="event-dot verified"></div>
+        </div>
+        
+        <div class="event">
+            <div class="event-content disputed contradiction">
+                <div class="event-date">April 13, 2018</div>
+                <div class="event-title">⚠️ McCabe vs Comey Contradiction</div>
+                <div class="event-description">
+                    DOJ IG Report: McCabe says he told Comey about WSJ leak. Comey says McCabe didn't.
+                </div>
+                <div class="event-source">Source: DOJ IG Report</div>
+            </div>
+            <div class="event-dot disputed"></div>
+        </div>
+        
+        <!-- 2020 -->
+        <div class="year-marker">
+            <h2>2020</h2>
+        </div>
+        
+        <div class="event">
+            <div class="event-content verified">
+                <div class="event-date">September 30, 2020</div>
+                <div class="event-title">Comey Stands By Denial</div>
+                <div class="event-description">
+                    Despite McCabe's contradiction, Comey maintains he never knew about leak authorization
+                </div>
+                <div class="event-source">Source: Senate Judiciary testimony</div>
+            </div>
+            <div class="event-dot verified"></div>
+        </div>
+        
+        <!-- 2023 -->
+        <div class="year-marker">
+            <h2>2023</h2>
+        </div>
+        
+        <div class="event">
+            <div class="event-content verified">
+                <div class="event-date">May 12, 2023</div>
+                <div class="event-title">Durham Report Released</div>
+                <div class="event-description">
+                    306-page report finds FBI "rushed" into Trump-Russia probe. 29-page classified appendix withheld.
+                </div>
+                <div class="event-source">Source: DOJ, CNN</div>
+            </div>
+            <div class="event-dot verified"></div>
+        </div>
+        
+        <!-- 2025 -->
+        <div class="year-marker">
+            <h2>2025</h2>
+        </div>
+        
+        <div class="event">
+            <div class="event-content verified">
+                <div class="event-date">July 31, 2025</div>
+                <div class="event-title">Durham Annex Declassified</div>
+                <div class="event-description">
+                    29-page appendix released from "FBI burn bags" - documents headed for incineration
+                </div>
+                <div class="event-source">Source: Sen. Grassley, Washington Post</div>
+            </div>
+            <div class="event-dot verified"></div>
+        </div>
+        
+        <div class="event">
+            <div class="event-content verified">
+                <div class="event-date">September 30, 2025</div>
+                <div class="event-title">Today: Statute of Limitations Expires</div>
+                <div class="event-description">
+                    5-year deadline for potential Comey perjury charges expires at midnight
+                </div>
+                <div class="event-source">Source: CNN, ABC News</div>
+            </div>
+            <div class="event-dot disputed"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Add animation delays to events
+        const events = document.querySelectorAll('.event');
+        events.forEach((event, index) => {
+            event.style.animationDelay = `${index * 0.1}s`;
+        });
+        
+        // Add click interaction
+        const eventContents = document.querySelectorAll('.event-content');
+        eventContents.forEach(content => {
+            content.addEventListener('click', function() {
+                this.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 300);
+            });
+        });
+    </script>
+</body>
+</html>
